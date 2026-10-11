@@ -288,6 +288,16 @@ jobs:
         run: cmake --build build
       - shell: cmd
         run: cmake --build build --target libs
+      - name: List build outputs
+        run: find build -maxdepth 4 \( -name '*.exe' -o -name '*.prx' \) | head -100
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: anyps5-windows
+          path: |
+            build/core/relinker/relinker.exe
+            build/core/libs/libs
+          if-no-files-found: warn
       - shell: cmd
         run: ctest --test-dir build --output-on-failure --timeout 120 --parallel 4 --output-log ctest.log --output-junit ctest.xml
       - run: python tools/check_skips.py build/ctest.xml --job windows
